@@ -4,10 +4,9 @@ public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
     private float currentHealth;
-
     public bool isDead = false;
 
-    private void Start()
+    void Start()
     {
         currentHealth = maxHealth;
     }
@@ -27,10 +26,24 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        isDead = true;
-        Debug.Log("Player died!");
+        if (isDead) return;
 
-        // Disable player (or replace with animation, respawn, etc.)
-        gameObject.SetActive(false);
+        isDead = true;
+        Debug.Log("Player Died! Game Over.");
+
+        // Disable shooting and movement scripts
+        var shoot = GetComponent<PlayerAutoShoot>();
+        if (shoot != null) shoot.enabled = false;
+
+        var controller = GetComponent<CharacterController>();
+        if (controller != null) controller.enabled = false;
+
+        // Call GameManager to handle scene reload
+        GameManager.Instance.GameOver(1f);
+
+        // Destroy player so it doesn't block UI
+        Destroy(gameObject);
     }
 }
+
+
