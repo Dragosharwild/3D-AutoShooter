@@ -1,0 +1,50 @@
+using UnityEngine;
+
+public class EnemyFollow : MonoBehaviour
+{
+    public Transform player;
+    public float speed = 3f;
+    public float damage = 10f;
+
+    public float attackCooldown = 1.5f;
+    private float lastAttackTime;
+
+    private PlayerHealth playerHealth;
+
+    private void Start()
+    {
+        if (player != null)
+        {
+            playerHealth = player.GetComponent<PlayerHealth>();
+        }
+    }
+
+    private void Update()
+    {
+        if (player == null || playerHealth == null) return;
+
+        // Stop if player is dead
+        if (playerHealth.isDead) return;
+
+        // Move toward player
+        Vector3 direction = (player.position - transform.position).normalized;
+        transform.position += direction * speed * Time.deltaTime;
+
+        transform.LookAt(player);
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (playerHealth == null || playerHealth.isDead) return;
+
+            // Cooldown check
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                playerHealth.TakeDamage(damage);
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+}
