@@ -4,7 +4,9 @@ public class EnemyFollow : MonoBehaviour
 {
     public Transform player;
     public float speed = 3f;
-    public float damage = 10f;
+    
+    // Changed to int, taking 1 heart per hit
+    public int damage = 1; 
 
     public float attackCooldown = 1.5f;
     private float lastAttackTime;
@@ -39,7 +41,7 @@ public class EnemyFollow : MonoBehaviour
         {
             if (playerHealth == null || playerHealth.isDead) return;
 
-            // Cooldown check
+            // Cooldown check (Wait 1.5s between attacks)
             if (Time.time >= lastAttackTime + attackCooldown)
             {
                 playerHealth.TakeDamage(damage);
